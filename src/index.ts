@@ -35,6 +35,8 @@ export default {
 		try {
 			const str = request.headers.get('Mock-Schema-Base64') || '';
 			const schema = JSON.parse(atob(str))
+			const timeout = Number(request.headers.get('__timeout') ?? 0);
+			await new Promise(resolve => setTimeout(resolve, timeout));
 			return new Response(JSON.stringify({
 				__schema__: schema,
 				...mock(schema),
@@ -50,6 +52,9 @@ export default {
 					mockjs: 'http://mockjs.com/examples.html',
 					'headers': {
 						'Mock-Schema-Base64': btoa(JSON.stringify({'result|10': [{ id: '@uuid()', name: '@name()' }]}))
+					},
+					'optinal-headers': {
+						'__timeout': 1000
 					}
 				}
 			}), {
